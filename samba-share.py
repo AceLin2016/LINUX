@@ -48,16 +48,43 @@ def smbRestart ():
 class ConfigInfo(object):
 	"""docstring for ConfigInfo"""
 	__curUser = None
+	__smbUsername = None
+	__smbDir = None
+	__smbComment = None
+	__smbShareName = None
 
-	def __init__(self, arg):
-
-		self.arg = arg
+	def __init__(self):
+		# self.arg = arg
+		pass
 		
 	def getLoginUserName(self):
 		"""
 		-[o] 注意 `$ ***.py` 和使用 `$ sudo ***,py` 启动的冲突！
 		"""
 		self.__curUser = os.system("whoami")
+
+	def getUsername(self):
+		return self.__smbUsername
+	def getDirectory(self):
+		return self.__smbDir
+	def getComment(self):
+		return self.__smbComment
+	def getShareName(self):
+		return self.__smbShareName
+
+	def setShareName(self, shareName):
+		self.__smbShareName = shareName
+
+	def setComment(self, comment):
+		self.__smbComment = comment
+
+	def setDirectory(self, _dir):
+		self.__smbDir = _dir
+
+	def setUsername(self, username):
+		self.__smbUsername = username
+
+
 
 ###
 ### global varibales
@@ -83,12 +110,27 @@ def main():
 	if doDebug:
 		print( "sharFormat = \n%s"%sharFormat )
 
+	"""
+	v0.0.1: $ ./samba-share.py  ~    JosephLin   josephlin
+	          [program name]  [dir] [share name] [username]
+	"""
+	argc = len(sys.argv)
+	if argc != 4:
+		print( "usage: %s <directory you want to share by smaba> <share Name> <login username>" )
+		sys.exit(1) ## Command error.
+
+	smbConfInfo = ConfigInfo()
+	smbConfInfo.setShareName(sys.argv[2])
+	smbConfInfo.setComment("N/A")
+	smbConfInfo.setDirectory(sys.argv[1])
+	smbConfInfo.setUsername(sys.argv[3])
 
 	smbConfigTpl = Template(sharFormat)
-	smbConfigStr = smbConfigTpl.render( v_dispName = "Joseph-Lin",
-								v_shareDir = "/home/josephlin",
-								v_comment = "N/A", 
-								v_username = "josephlin" ) 
+	smbConfigStr = smbConfigTpl.render( 
+							v_dispName = smbConfInfo.getShareName(),
+							v_comment = smbConfInfo.getComment(), 
+							v_shareDir = smbConfInfo.getDirectory(),
+							v_username = smbConfInfo.getUsername() ) 
 	if doDebug:
 		print (smbConfigStr)
 
