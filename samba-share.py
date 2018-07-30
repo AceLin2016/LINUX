@@ -83,6 +83,16 @@ def main():
 	if doDebug:
 		print( "sharFormat = \n%s"%sharFormat )
 
+
+	smbConfigTpl = Template(sharFormat)
+	smbConfigStr = smbConfigTpl.render( v_dispName = "Joseph-Lin",
+								v_shareDir = "/home/josephlin",
+								v_comment = "N/A", 
+								v_username = "josephlin" ) 
+	if doDebug:
+		print (smbConfigStr)
+
+
 	pass
 
 #end main
